@@ -19,4 +19,8 @@ export const categories = [
     id: "accessories",
     name: "Accesorios",
   },
+  {
+    id: "offers",
+    name: "Ofertas",
+  },
 ];

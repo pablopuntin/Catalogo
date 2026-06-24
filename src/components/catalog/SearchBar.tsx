@@ -1,9 +1,21 @@
-export function SearchBar() {
+type SearchBarProps = {
+  search: string;
+  onSearchChange: (value: string) => void;
+};
+
+export function SearchBar({
+  search,
+  onSearchChange,
+}: SearchBarProps) {
   return (
     <div className="w-full">
       <input
         type="text"
         placeholder="Buscar productos..."
+        value={search}
+        onChange={(e) =>
+          onSearchChange(e.target.value)
+        }
         className="
           w-full
           rounded-lg
