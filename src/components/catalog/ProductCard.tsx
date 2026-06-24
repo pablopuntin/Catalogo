@@ -22,13 +22,15 @@ export function ProductCard({
           bg-black
         "
       >
+        
         <div className="aspect-square overflow-hidden">
           <img
             src={image}
             alt={name}
             className="
-              h-full
               w-full
+              aspect-square
+              rounded-xl
               object-cover
             "
           />

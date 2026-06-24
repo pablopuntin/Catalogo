@@ -10,13 +10,10 @@ export function ProductGrid() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            slug={product.slug}
-            name={product.name}
-            price={product.price}
-            image={product.image}
-          />
+         <ProductCard
+  key={product.id}
+  {...product}
+/>
         ))}
       </div>
     </section>
