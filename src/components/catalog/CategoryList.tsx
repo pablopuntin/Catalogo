@@ -1,11 +1,13 @@
-import { categories } from "@/data/categories";
+import { CatalogCategory } from '@/types/catalog';
 
 type CategoryListProps = {
+  categories: (CatalogCategory & { id: string })[];
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 };
 
 export function CategoryList({
+  categories,
   selectedCategory,
   onSelectCategory,
 }: CategoryListProps) {
@@ -15,9 +17,7 @@ export function CategoryList({
         {categories.map((category) => (
           <button
             key={category.id}
-            onClick={() =>
-              onSelectCategory(category.name)
-            }
+            onClick={() => onSelectCategory(category.name)}
             className={`
               whitespace-nowrap
               rounded-full
@@ -25,11 +25,7 @@ export function CategoryList({
               px-4
               py-2
               text-sm
-              ${
-                selectedCategory === category.name
-                  ? "bg-white text-black"
-                  : ""
-              }
+              ${selectedCategory === category.name ? 'bg-white text-black' : ''}
             `}
           >
             {category.name}

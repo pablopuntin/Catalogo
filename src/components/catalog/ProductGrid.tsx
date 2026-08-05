@@ -1,26 +1,27 @@
-import { Product } from "@/types/products";
-import { ProductCard } from "./ProductCard";
+import { CatalogProduct } from '@/types/catalog';
+import { ProductCard } from './ProductCard';
 
 type ProductGridProps = {
-  products: Product[];
-  onAdd: (product: Product) => void;
+  products: CatalogProduct[];
+  onAdd: (product: CatalogProduct) => void;
 };
 
-export function ProductGrid({
-  products,
-  onAdd,
-}: ProductGridProps) {
+export function ProductGrid({ products, onAdd }: ProductGridProps) {
+  if (products.length === 0) {
+    return (
+      <p className="text-center text-neutral-400 text-sm py-16">
+        No se encontraron productos.
+      </p>
+    );
+  }
+
   return (
     <section className="mt-6">
-      <h2 className="mb-4 text-xl font-bold">
-        Productos Destacados
-      </h2>
-
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            {...product}
+            product={product}
             onAdd={() => onAdd(product)}
           />
         ))}

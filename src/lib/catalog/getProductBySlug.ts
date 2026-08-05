@@ -1,7 +1,5 @@
-import { products } from "@/data/products";
+import { catalogService } from '@/services/catalog.service';
 
-export function getProductBySlug(slug: string) {
-  return products.find(
-    (product) => product.slug === slug
-  );
+export async function getProductBySlug(slug: string) {
+  return catalogService.getProductBySlug(slug);
 }

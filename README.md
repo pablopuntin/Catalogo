@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Catálogo Digital para Negocios - Frontend
 
-## Getting Started
+## Descripción
 
-First, run the development server:
+Este proyecto corresponde al frontend del **Catálogo Digital para Negocios**, una aplicación web orientada a pequeños y medianos comercios que permite publicar un catálogo de productos y administrarlo mediante un panel integrado.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+El objetivo del proyecto es ofrecer una experiencia rápida, intuitiva y profesional tanto para los clientes finales como para los comerciantes que administran su catálogo.
+
+Este sistema está pensado para **implementaciones personalizadas** y no para una plataforma SaaS multi-tenant.
+
+---
+
+# Objetivos
+
+El frontend debe permitir que un usuario pueda:
+
+- navegar el catálogo;
+- buscar productos;
+- filtrar por categorías;
+- visualizar el detalle de cada producto;
+- generar consultas mediante WhatsApp.
+
+El mismo proyecto también incluirá el panel administrativo utilizado por los comerciantes para gestionar el contenido del catálogo.
+
+---
+
+# Filosofía del Proyecto
+
+Las decisiones de desarrollo deberán respetar los siguientes principios:
+
+- Mobile First.
+- Simplicidad.
+- Rapidez de navegación.
+- Componentes reutilizables.
+- Escalabilidad progresiva.
+- Experiencia de usuario por encima de la complejidad técnica.
+
+Cuando exista un conflicto entre una solución técnicamente compleja y una solución simple de mantener, se priorizará la segunda.
+
+---
+
+# Tecnologías
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+---
+
+# Arquitectura
+
+La aplicación se encuentra organizada en módulos simples y desacoplados.
+
+El frontend está preparado para consumir datos mock durante el desarrollo y posteriormente reemplazarlos por una API REST sin modificar la interfaz de usuario.
+
+Toda la información relacionada con la arquitectura se documenta en:
+
+```
+docs/architecture.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Las decisiones técnicas importantes se registran en:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+docs/decisions.md
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Estado del Proyecto
 
-To learn more about Next.js, take a look at the following resources:
+Actualmente el frontend constituye la interfaz pública del producto.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Su evolución contempla incorporar progresivamente:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- panel administrativo;
+- autenticación;
+- integración con backend;
+- carga dinámica de productos;
+- gestión de imágenes;
+- administración de usuarios.
 
-## Deploy on Vercel
+Estas funcionalidades deberán incorporarse manteniendo la experiencia de usuario y evitando reescrituras importantes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Objetivo Comercial
+
+El objetivo del producto es que un comerciante pueda utilizarlo diariamente para administrar su catálogo y que un potencial cliente perciba una solución profesional lista para implementar en su negocio.
