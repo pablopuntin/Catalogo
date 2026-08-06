@@ -266,7 +266,7 @@ export default function Home() {
         onCartOpen={() => setCartOpen(true)}
       />
 
-      <main className="p-4">
+      {/* <main className="p-4">
         <SearchBar search={search} onSearchChange={setSearch} />
 
         <CategoryList
@@ -285,7 +285,49 @@ export default function Home() {
         ) : (
           <ProductGrid products={filteredProducts} onAdd={handleAdd} />
         )}
-      </main>
+      </main> */}
+
+        <main className="p-4">
+
+  {/* Hero — solo si existe la imagen o descripción */}
+  {(config?.heroImageUrl || config?.businessDescription) && (
+    <div className="mb-6 rounded-xl overflow-hidden">
+      {config.heroImageUrl && (
+        <div className="aspect-video w-full bg-neutral-900">
+          <img
+            src={config.heroImageUrl}
+            alt={config.businessName}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      {config.businessDescription && (
+        <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
+          {config.businessDescription}
+        </p>
+      )}
+    </div>
+  )}
+
+  <SearchBar search={search} onSearchChange={setSearch} />
+
+  <CategoryList
+    categories={[
+      { id: 'all', name: 'Todos', slug: 'todos' },
+      ...categories,
+    ]}
+    selectedCategory={selectedCategory}
+    onSelectCategory={setSelectedCategory}
+  />
+
+  {loading ? (
+    <p className="text-center text-neutral-400 text-sm py-16">
+      Cargando productos...
+    </p>
+  ) : (
+    <ProductGrid products={filteredProducts} onAdd={handleAdd} />
+  )}
+</main>
 
       {/* Botón flotante — abre el sheet */}
       {totalItems > 0 && (

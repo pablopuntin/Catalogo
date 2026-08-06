@@ -8,10 +8,18 @@ import {
   BusinessConfig,
 } from '@/services/business-config.service';
 import { ApiException } from '@/services/api';
+import { useRef } from 'react';
+import { businessConfigImagesService } from '@/services/business-config-images.service';
+
 
 export default function ConfigPage() {
   const router = useRouter();
   const token = useAuthStore((s) => s.accessToken)!;
+
+  // Refs para los inputs de archivo
+const logoInputRef = useRef<HTMLInputElement>(null);
+const heroInputRef = useRef<HTMLInputElement>(null);
+
 
   // Campos
   const [businessName, setBusinessName] = useState('');
@@ -40,6 +48,10 @@ export default function ConfigPage() {
   const [success, setSuccess] = useState('');
   const [isNew, setIsNew] = useState(false);
 
+  // Estados de carga de imágenes
+const [uploadingLogo, setUploadingLogo] = useState(false);
+const [uploadingHero, setUploadingHero] = useState(false);
+
   useEffect(() => {
     if (!token) return;
     businessConfigService.get(token)
@@ -66,6 +78,40 @@ export default function ConfigPage() {
       .catch(() => setIsNew(true))
       .finally(() => setLoadingData(false));
   }, [token]);
+
+  async function handleImageUpload(
+  e: React.ChangeEvent<HTMLInputElement>,
+  type: 'logo' | 'hero',
+) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    setError('La imagen no puede superar los 5MB.');
+    return;
+  }
+
+  type === 'logo' ? setUploadingLogo(true) : setUploadingHero(true);
+  setError('');
+
+  try {
+    const result = type === 'logo'
+      ? await businessConfigImagesService.uploadLogo(file, token)
+      : await businessConfigImagesService.uploadHero(file, token);
+
+    if (type === 'logo') {
+      setLogoUrl(result.logoUrl ?? '');
+    } else {
+      setHeroImageUrl(result.heroImageUrl ?? '');
+    }
+
+    setSuccess('Imagen subida correctamente.');
+  } catch {
+    setError('Error al subir la imagen.');
+  } finally {
+    type === 'logo' ? setUploadingLogo(false) : setUploadingHero(false);
+  }
+}
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -368,62 +414,96 @@ export default function ConfigPage() {
         </div>
 
         {/* Apariencia */}
-        <div className={sectionClass}>
-          <p className={sectionTitleClass}>
-            Apariencia
-            <span className="text-neutral-600 text-xs ml-2 font-normal">
-              (recomendado completar al menos uno)
-            </span>
-          </p>
+<div className={sectionClass}>
+  <p className={sectionTitleClass}>
+    Apariencia
+    <span className="text-neutral-600 text-xs ml-2 font-normal">
+      (recomendado completar al menos uno)
+    </span>
+  </p>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Logo URL</label>
-            <input
-              type="url"
-              value={logoUrl}
-              onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://..."
-              className={inputClass}
-            />
-          </div>
+  {/* Logo */}
+  <div className="flex flex-col gap-2">
+    <label className={labelClass}>Logo</label>
+    {logoUrl && (
+      <div className="w-32 h-32 rounded-xl overflow-hidden bg-neutral-800">
+        <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+      </div>
+    )}
+    <input
+      ref={logoInputRef}
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      onChange={(e) => handleImageUpload(e, 'logo')}
+      className="hidden"
+    />
+    <button
+      type="button"
+      onClick={() => logoInputRef.current?.click()}
+      disabled={uploadingLogo}
+      className="rounded-lg border border-neutral-700 border-dashed bg-neutral-900 px-4 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white transition-colors text-center disabled:opacity-50"
+    >
+      {uploadingLogo ? 'Subiendo...' : logoUrl ? '🔄 Cambiar logo' : '📷 Subir logo'}
+      <span className="block text-xs text-neutral-600 mt-1">
+        JPG, PNG o WebP — máx. 5MB
+      </span>
+    </button>
+  </div>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Imagen principal (hero)</label>
-            <input
-              type="url"
-              value={heroImageUrl}
-              onChange={(e) => setHeroImageUrl(e.target.value)}
-              placeholder="https://..."
-              className={inputClass}
-            />
-          </div>
-        </div>
+  {/* Hero */}
+  <div className="flex flex-col gap-2">
+    <label className={labelClass}>Imagen principal (hero)</label>
+    {heroImageUrl && (
+      <div className="w-full aspect-video rounded-xl overflow-hidden bg-neutral-800">
+        <img src={heroImageUrl} alt="Hero" className="w-full h-full object-cover" />
+      </div>
+    )}
+    <input
+      ref={heroInputRef}
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      onChange={(e) => handleImageUpload(e, 'hero')}
+      className="hidden"
+    />
+    <button
+      type="button"
+      onClick={() => heroInputRef.current?.click()}
+      disabled={uploadingHero}
+      className="rounded-lg border border-neutral-700 border-dashed bg-neutral-900 px-4 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white transition-colors text-center disabled:opacity-50"
+    >
+      {uploadingHero ? 'Subiendo...' : heroImageUrl ? '🔄 Cambiar imagen' : '📷 Subir imagen principal'}
+      <span className="block text-xs text-neutral-600 mt-1">
+        JPG, PNG o WebP — máx. 5MB
+      </span>
+    </button>
+  </div>
+</div>
 
-        {/* Error y éxito */}
-        {error && (
-          <p className="text-sm text-red-400 text-center">{error}</p>
-        )}
-        {success && (
-          <p className="text-sm text-green-400 text-center">{success}</p>
-        )}
+{/* Error y éxito */}
+{error && (
+  <p className="text-sm text-red-400 text-center">{error}</p>
+)}
+{success && (
+  <p className="text-sm text-green-400 text-center">{success}</p>
+)}
 
-        {/* Acciones */}
-        <div className="flex flex-col gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-white text-black py-3 text-sm font-semibold disabled:opacity-50"
-          >
-            {loading ? 'Guardando...' : 'Guardar datos'}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push('/dashboard')}
-            className="w-full rounded-lg border border-neutral-700 py-3 text-sm text-neutral-400 hover:text-white hover:border-neutral-500 transition-colors"
-          >
-            Cancelar
-          </button>
-        </div>
+{/* Acciones */}
+<div className="flex flex-col gap-3 pt-2">
+  <button
+    type="submit"
+    disabled={loading}
+    className="w-full rounded-lg bg-white text-black py-3 text-sm font-semibold disabled:opacity-50"
+  >
+    {loading ? 'Guardando...' : 'Guardar datos'}
+  </button>
+  <button
+    type="button"
+    onClick={() => router.push('/dashboard')}
+    className="w-full rounded-lg border border-neutral-700 py-3 text-sm text-neutral-400 hover:text-white hover:border-neutral-500 transition-colors"
+  >
+    Cancelar
+  </button>
+</div>
 
       </form>
     </div>
