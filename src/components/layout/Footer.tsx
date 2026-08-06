@@ -61,7 +61,7 @@ export function Footer({ config }: FooterProps) {
   const hasContact = config.email || config.whatsapp;
 
   return (
-    <footer className="mt-8 border-t border-neutral-800 bg-black px-4 py-8">
+    <footer id="footer" className="mt-8 border-t border-neutral-800 bg-black px-4 py-8">
       <div className="mx-auto flex max-w-lg flex-col gap-6">
 
         {/* Nombre y horario */}

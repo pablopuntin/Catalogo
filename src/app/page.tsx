@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/Header';
-import { SearchBar } from '@/components/catalog/SearchBar';
-import { CategoryList } from '@/components/catalog/CategoryList';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { CartSheet } from '@/components/catalog/CartSheet';
 import { catalogService } from '@/services/catalog.service';
@@ -72,7 +70,6 @@ export default function Home() {
             )
             .join('\n')}\n\n¿Tenés disponibilidad?`;
 
-    // Guardar consulta en BD
     if (cart.length > 0) {
       quotesService.create({
         items: cart.map((item) => ({
@@ -83,11 +80,9 @@ export default function Home() {
       }).catch(() => {});
     }
 
-    // Limpiar carrito y cerrar sheet
     setCart([]);
     setCartOpen(false);
 
-    // Abrir WhatsApp
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
       '_blank',
@@ -98,9 +93,7 @@ export default function Home() {
     const matchCategory =
       selectedCategory === 'Todos'
         ? true
-        : product.categories.some(
-            (c) => c.category.name === selectedCategory,
-          );
+        : product.categories.some((c) => c.category.name === selectedCategory);
     const matchSearch = product.name
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -115,19 +108,33 @@ export default function Home() {
         count={totalItems}
         config={config}
         onCartOpen={() => setCartOpen(true)}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        search={search}
+        onSearchChange={setSearch}
       />
 
-      {/* <main className="p-4">
-        <SearchBar search={search} onSearchChange={setSearch} />
-
-        <CategoryList
-          categories={[
-            { id: 'all', name: 'Todos', slug: 'todos' },
-            ...categories,
-          ]}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+      <main className="p-4">
+        {/* Hero — solo si existe la imagen o descripción */}
+        {(config?.heroImageUrl || config?.businessDescription) && (
+          <div className="mb-6 rounded-xl overflow-hidden">
+            {config.heroImageUrl && (
+              <div className="aspect-video w-full bg-neutral-900">
+                <img
+                  src={config.heroImageUrl}
+                  alt={config.businessName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            {config.businessDescription && (
+              <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
+                {config.businessDescription}
+              </p>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <p className="text-center text-neutral-400 text-sm py-16">
@@ -136,52 +143,10 @@ export default function Home() {
         ) : (
           <ProductGrid products={filteredProducts} onAdd={handleAdd} />
         )}
-      </main> */}
+      </main>
 
-        <main className="p-4">
-
-  {/* Hero — solo si existe la imagen o descripción */}
-  {(config?.heroImageUrl || config?.businessDescription) && (
-    <div className="mb-6 rounded-xl overflow-hidden">
-      {config.heroImageUrl && (
-        <div className="aspect-video w-full bg-neutral-900">
-          <img
-            src={config.heroImageUrl}
-            alt={config.businessName}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-      {config.businessDescription && (
-        <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
-          {config.businessDescription}
-        </p>
-      )}
-    </div>
-  )}
-
-  <SearchBar search={search} onSearchChange={setSearch} />
-
-  <CategoryList
-    categories={[
-      { id: 'all', name: 'Todos', slug: 'todos' },
-      ...categories,
-    ]}
-    selectedCategory={selectedCategory}
-    onSelectCategory={setSelectedCategory}
-  />
-
-  {loading ? (
-    <p className="text-center text-neutral-400 text-sm py-16">
-      Cargando productos...
-    </p>
-  ) : (
-    <ProductGrid products={filteredProducts} onAdd={handleAdd} />
-  )}
-</main>
-
- {/* footer */}
-  <Footer config={config} />
+      {/* footer */}
+      <Footer config={config} />
 
       {/* Botón flotante — abre el sheet */}
       {totalItems > 0 && (
