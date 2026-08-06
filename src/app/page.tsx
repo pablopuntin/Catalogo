@@ -1,153 +1,3 @@
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-// import { Header } from '@/components/layout/Header';
-// import { SearchBar } from '@/components/catalog/SearchBar';
-// import { CategoryList } from '@/components/catalog/CategoryList';
-// import { ProductGrid } from '@/components/catalog/ProductGrid';
-// import { catalogService } from '@/services/catalog.service';
-// import { businessConfigService, BusinessConfig } from '@/services/business-config.service';
-// import { CatalogProduct, CatalogCategory } from '@/types/catalog';
-// import { quotesService } from '@/services/quotes.service';
-
-
-// type CartItem = {
-//   product: CatalogProduct;
-//   quantity: number;
-// };
-
-// export default function Home() {
-//   const [products, setProducts] = useState<CatalogProduct[]>([]);
-//   const [categories, setCategories] = useState<CatalogCategory[]>([]);
-//   const [config, setConfig] = useState<BusinessConfig | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [cart, setCart] = useState<CartItem[]>([]);
-//   const [selectedCategory, setSelectedCategory] = useState('Todos');
-//   const [search, setSearch] = useState('');
-
-//   useEffect(() => {
-//     Promise.all([
-//       catalogService.getProducts(),
-//       catalogService.getCategories(),
-//       businessConfigService.getPublic().catch(() => null),
-//     ])
-//       .then(([prods, cats, cfg]) => {
-//         setProducts(prods);
-//         setCategories(cats);
-//         setConfig(cfg);
-//       })
-//       .finally(() => setLoading(false));
-//   }, []);
-
-//   function handleAdd(product: CatalogProduct) {
-//     setCart((prev) => {
-//       const existing = prev.find((item) => item.product.id === product.id);
-//       if (existing) {
-//         return prev.map((item) =>
-//           item.product.id === product.id
-//             ? { ...item, quantity: item.quantity < 5 ? item.quantity + 1 : 5 }
-//             : item,
-//         );
-//       }
-//       return [...prev, { product, quantity: 1 }];
-//     });
-//   }
-
-//   const filteredProducts = products.filter((product) => {
-//     const matchCategory =
-//       selectedCategory === 'Todos'
-//         ? true
-//         : product.categories.some(
-//             (c) => c.category.name === selectedCategory,
-//           );
-//     const matchSearch = product.name
-//       .toLowerCase()
-//       .includes(search.toLowerCase());
-//     return matchCategory && matchSearch;
-//   });
-
-//   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-//   const whatsappMessage =
-//     cart.length === 0
-//       ? 'Hola, quisiera realizar una consulta.'
-//       : `Hola, quisiera consultar por los siguientes productos:\n\n${cart
-//           .map(
-//             (item) =>
-//               `🛍️ ${item.product.name} x${item.quantity} - $${Number(item.product.price).toLocaleString('es-AR')}`,
-//           )
-//           .join('\n')}\n\n¿Tenés disponibilidad?\n\nTotal de productos: ${totalItems}`;
-
-//   // function handleWhatsApp() {
-//   //   const phone = config?.whatsapp ?? '';
-//   //   window.open(
-//   //     `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`,
-//   //     '_blank',
-//   //   );
-//   // }
-
-
-//   async function handleWhatsApp() {
-//   const phone = config?.whatsapp ?? '5493857408466';
-
-//   // Guardar consulta en BD si hay productos en el carrito
-//   if (cart.length > 0) {
-//     quotesService.create({
-//       items: cart.map((item) => ({
-//         productId: item.product.id,
-//         quantity: item.quantity,
-//       })),
-//       notes: 'Consulta desde el catálogo',
-//     }).catch(() => {}); // silencioso — si falla no afecta al cliente
-//   }
-
-//   window.open(
-//     `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`,
-//     '_blank',
-//   );
-// }
-
-//   return (
-//     <>
-//       <Header
-//         count={totalItems}
-//         message={whatsappMessage}
-//         config={config}
-//         onWhatsApp={handleWhatsApp}
-//       />
-
-//       <main className="p-4">
-//         <SearchBar search={search} onSearchChange={setSearch} />
-
-//         <CategoryList
-//           categories={[
-//             { id: 'all', name: 'Todos', slug: 'todos' },
-//             ...categories,
-//           ]}
-//           selectedCategory={selectedCategory}
-//           onSelectCategory={setSelectedCategory}
-//         />
-
-//         {loading ? (
-//           <p className="text-center text-neutral-400 text-sm py-16">
-//             Cargando productos...
-//           </p>
-//         ) : (
-//           <ProductGrid products={filteredProducts} onAdd={handleAdd} />
-//         )}
-//       </main>
-
-//       <button
-//         onClick={handleWhatsApp}
-//         className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-3 rounded-full shadow-lg text-sm font-semibold"
-//       >
-//         WhatsApp ({totalItems})
-//       </button>
-//     </>
-//   );
-// }
-
-//ref
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -160,6 +10,7 @@ import { catalogService } from '@/services/catalog.service';
 import { businessConfigService, BusinessConfig } from '@/services/business-config.service';
 import { quotesService } from '@/services/quotes.service';
 import { CatalogProduct, CatalogCategory } from '@/types/catalog';
+import { Footer } from '@/components/layout/Footer';
 
 type CartItem = {
   product: CatalogProduct;
@@ -328,6 +179,9 @@ export default function Home() {
     <ProductGrid products={filteredProducts} onAdd={handleAdd} />
   )}
 </main>
+
+ {/* footer */}
+  <Footer config={config} />
 
       {/* Botón flotante — abre el sheet */}
       {totalItems > 0 && (
