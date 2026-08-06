@@ -58,7 +58,7 @@ export function Footer({ config }: FooterProps) {
 
   const hasSocial = config.instagram || config.facebook || config.tiktok || config.website;
   const hasLocation = config.address || config.city || config.province;
-  const hasContact = config.phone || config.email || config.whatsapp;
+  const hasContact = config.email || config.whatsapp;
 
   return (
     <footer className="mt-8 border-t border-neutral-800 bg-black px-4 py-8">
@@ -103,16 +103,18 @@ export function Footer({ config }: FooterProps) {
                   ✉️ Email
                 </a>
               )}
-              {config.phone && (
+
+
+              {/* {config.phone && (
                 <a
                   href={'tel:' + config.phone.replace(/\s/g, '')}
                   className="inline-flex items-center gap-1 rounded-full border border-neutral-700 px-3 py-1.5 text-xs text-neutral-300 hover:border-neutral-500 transition-colors"
                 >
                   📞 {config.phone}
                 </a>
-              )}
-            </div>
-          )}
+                )} */}
+              </div>
+                )}
 
           {/* Ubicación — se estira y ocupa el espacio libre */}
           {hasLocation && (
