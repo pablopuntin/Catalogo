@@ -12,10 +12,18 @@ export type CatalogCategory = {
   slug: string;
 };
 
+// export type CatalogBrand = {
+//   id: string;
+//   name: string;
+//   slug: string;
+// };
+
+//ref
 export type CatalogBrand = {
   id: string;
   name: string;
   slug: string;
+  logoUrl?: string | null;
 };
 
 export type CatalogPromotion = {
@@ -25,23 +33,7 @@ export type CatalogPromotion = {
   discountValue: string | null;
 };
 
-// export type CatalogProduct = {
-//   id: string;
-//   name: string;
-//   slug: string;
-//   description: string | null;
-//   sku: string;
-//   price: string;
-//   active: boolean;
-//   brand: CatalogBrand;
-//   categories: {
-//     categoryId: string;
-//     category: CatalogCategory;
-//   }[];
-//   images: CatalogImage[];
-// };
 
-//ref
 export type CatalogProduct = {
   id: string;
   name: string;

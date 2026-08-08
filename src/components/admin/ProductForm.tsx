@@ -556,6 +556,7 @@ export function ProductForm({ productId }: ProductFormProps) {
                 onChange={(e) => setDiscountValue(e.target.value)}
                 min={0}
                 step={0.01}
+                  onWheel={(e) => e.currentTarget.blur()}
                 placeholder={discountType === 'PERCENTAGE' ? 'Ej: 20' : 'Ej: 5000'}
                 className="mt-2 rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-neutral-500"
               />
