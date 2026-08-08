@@ -39,10 +39,21 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-neutral-600 text-xs">Sin imagen</span>
+            {/* <span className="text-neutral-600 text-xs">Sin imagen</span>
           </div>
         )}
 
+       </div> */}
+
+       <span className="text-neutral-600 text-xs">Sin imagen</span>
+          </div>
+        )}
+
+        {product.featured && (
+          <span className="absolute top-2 right-2 rounded-full bg-yellow-500 px-2 py-0.5 text-xs font-bold text-black">
+            ⭐ Destacado
+          </span>
+        )}
        </div>
 
       <div className="p-3">

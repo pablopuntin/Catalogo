@@ -51,6 +51,7 @@ export type CatalogProduct = {
   price: string;
   finalPrice: string | null;    // ← nuevo
   promotion: CatalogPromotion | null;  // ← nuevo
+  featured: boolean;            // ← nuevo (destacado)
   active: boolean;
   brand: CatalogBrand;
   categories: {

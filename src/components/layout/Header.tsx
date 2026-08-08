@@ -1,3 +1,4 @@
+//ref
 'use client';
 
 import { useState } from 'react';
@@ -29,11 +30,6 @@ export function Header({
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const allCategories = [
-    { id: 'all', name: 'Todos', slug: 'todos' },
-    ...categories,
-  ];
-
   return (
     <header className="sticky top-0 z-50 bg-black border-b border-neutral-800">
       {/* Fila principal */}
@@ -47,8 +43,11 @@ export function Header({
           ☰
         </button>
 
-        {/* Logo + nombre */}
-        <div className="flex min-w-0 items-center gap-2 font-bold text-white">
+        {/* Logo + nombre (vuelve al inicio) */}
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-2 font-bold text-white"
+        >
           {config?.logoUrl && (
             <img
               src={config.logoUrl}
@@ -59,10 +58,16 @@ export function Header({
           <span className="truncate">
             {config?.businessName ?? 'Catálogo'}
           </span>
-        </div>
+        </Link>
 
-        {/* Lupa + Carrito */}
+        {/* Catálogo (md+) + Lupa + Carrito */}
         <div className="flex items-center gap-3">
+          <Link
+            href="/catalogo"
+            className="hidden md:inline text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+          >
+            Catálogo
+          </Link>
           <button
             onClick={() => setSearchOpen((v) => !v)}
             aria-label="Buscar"
@@ -96,12 +101,10 @@ export function Header({
       {/* Panel del menú ☰ */}
       {menuOpen && (
         <div className="fixed inset-0 z-50">
-          {/* Fondo oscuro (cierra al tocar) */}
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setMenuOpen(false)}
           />
-          {/* Panel lateral */}
           <div className="absolute left-0 top-0 h-full w-72 max-w-[80%] overflow-y-auto border-r border-neutral-800 bg-neutral-950 p-4">
             <div className="flex items-center justify-between">
               <span className="font-bold text-white">Menú</span>
@@ -137,7 +140,17 @@ export function Header({
               <span className="mb-1 text-xs uppercase text-neutral-500">
                 Categorías
               </span>
-              {allCategories.map((category) => (
+
+              {/* Catálogo — en el lugar de "Todos" (solo mobile; en md+ está en la barra) */}
+              <Link
+                href="/catalogo"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-left text-sm text-neutral-300 hover:bg-neutral-800 transition-colors md:hidden"
+              >
+                Catálogo
+              </Link>
+
+              {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => {

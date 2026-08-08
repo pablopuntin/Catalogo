@@ -1,18 +1,16 @@
-//ref para nuevas funcionalidades
 'use client';
 
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
-import { FeaturedCarousel } from '@/components/catalog/FeaturedCarousel';
 import { CartSheet } from '@/components/catalog/CartSheet';
+import { Footer } from '@/components/layout/Footer';
 import { catalogService } from '@/services/catalog.service';
 import { businessConfigService, BusinessConfig } from '@/services/business-config.service';
 import { CatalogProduct, CatalogCategory } from '@/types/catalog';
-import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/hooks/useCart';
 
-export default function Home() {
+export default function CatalogoPage() {
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [categories, setCategories] = useState<CatalogCategory[]>([]);
   const [config, setConfig] = useState<BusinessConfig | null>(null);
@@ -36,13 +34,6 @@ export default function Home() {
       })
       .finally(() => setLoading(false));
   }, []);
-
-  // const featured = products.filter(
-  //   (product) => product.promotion?.type === 'FEATURED',
-  // );
-
-  //ahora filtra por featured, osea por promociones
-  const featured = products.filter((product) => product.featured);
 
   const filteredProducts = products.filter((product) => {
     const matchCategory =
@@ -69,27 +60,9 @@ export default function Home() {
       />
 
       <main className="p-4">
-        {/* Hero — solo si existe la imagen o descripción */}
-        {(config?.heroImageUrl || config?.businessDescription) && (
-          <div className="mb-6 rounded-xl overflow-hidden">
-            {config.heroImageUrl && (
-              <div className="aspect-video w-full bg-neutral-900">
-                <img
-                  src={config.heroImageUrl}
-                  alt={config.businessName}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            {config.businessDescription && (
-              <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
-                {config.businessDescription}
-              </p>
-            )}
-          </div>
-        )}
-
-        {!loading && <FeaturedCarousel products={featured} onAdd={add} />}
+        <h1 className="mb-4 text-lg font-bold text-white">
+          {selectedCategory === 'Todos' ? 'Catálogo' : selectedCategory}
+        </h1>
 
         {loading ? (
           <p className="text-center text-neutral-400 text-sm py-16">
