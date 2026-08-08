@@ -1,35 +1,3 @@
-// import { CatalogProduct } from '@/types/catalog';
-// import { ProductCard } from './ProductCard';
-
-// type FeaturedCarouselProps = {
-//   products: CatalogProduct[];
-//   onAdd: (product: CatalogProduct) => void;
-//   title?: string;
-// };
-
-// export function FeaturedCarousel({
-//   products,
-//   onAdd,
-//   title = 'Nuestros destacados de la semana',
-// }: FeaturedCarouselProps) {
-//   if (products.length === 0) return null;
-
-//   return (
-//     <section className="mb-8">
-//       <h2 className="mb-4 text-xl font-bold text-white">{title}</h2>
-//       <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
-//         {products.map((product) => (
-//           <div key={product.id} className="w-40 shrink-0 snap-start sm:w-48">
-//             <ProductCard product={product} onAdd={() => onAdd(product)} />
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// }
-
-
-//ref
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
