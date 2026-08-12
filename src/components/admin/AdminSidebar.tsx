@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 const navItems = [
   { label: 'Dashboard',         href: '/dashboard' },
   { label: 'Consultas',         href: '/dashboard/quotes' },
+  { label: 'Marcas',            href: '/dashboard/brands' },
   { label: 'Datos del Negocio', href: '/dashboard/config' },
 ];
 
