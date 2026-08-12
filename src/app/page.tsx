@@ -53,7 +53,7 @@ function HomeContent() {
       <main className="p-4">
         {/* Banner */}
         {(config?.heroImageUrl || config?.businessDescription) && (
-          <div className="mb-6 rounded-xl overflow-hidden">
+          <div className="mb-10 rounded-xl overflow-hidden">
             {config.heroImageUrl && (
               <div className="aspect-video w-full bg-neutral-900">
                 <img
@@ -64,7 +64,11 @@ function HomeContent() {
               </div>
             )}
             {config.businessDescription && (
-              <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
+              // <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
+              //   {config.businessDescription}
+              // </p>
+
+              <p className="mt-4 text-center text-base font-medium leading-relaxed tracking-tight text-neutral-200 sm:text-lg md:text-xl">
                 {config.businessDescription}
               </p>
             )}
