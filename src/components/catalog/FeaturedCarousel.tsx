@@ -90,7 +90,7 @@ export function FeaturedCarousel({
         setPaused(false);
       }}
     >
-      <h2 className="mb-8 mt-5 text-center text-2xl font-bold tracking-tight text-white sm:mb-6 sm:text-3xl md:mb-8 md:text-4xl">
+      <h2 className="mb-5 mt-8 text-center text-2xl font-bold tracking-tight text-white sm:mb-6 sm:text-3xl md:mb-8 md:text-4xl">
         {title}
       </h2>
 

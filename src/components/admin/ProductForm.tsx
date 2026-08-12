@@ -31,11 +31,11 @@ export function ProductForm({ productId }: ProductFormProps) {
   const [discountType, setDiscountType] = useState<'' | 'PERCENTAGE' | 'FIXED' | 'TWO_FOR_ONE'>('');
   const [discountValue, setDiscountValue] = useState('');
 
-  // Imagen
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
-  const [currentImageId, setCurrentImageId] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+ // Imágenes
+  const [existingImages, setExistingImages] = useState<{ id: string; url: string }[]>([]);
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [newPreviews, setNewPreviews] = useState<string[]>([]);
 
   // Categorías
   const [categories, setCategories] = useState<Category[]>([]);
@@ -76,11 +76,9 @@ export function ProductForm({ productId }: ProductFormProps) {
             product.discountValue != null ? String(product.discountValue) : '',
           );
 
-          const primaryImage= product.images.find((i) => i.isPrimary) ?? product.images[0];
-          if (primaryImage) {
-            setCurrentImageUrl(primaryImage.url);
-            setCurrentImageId(primaryImage.id);
-          }
+         setExistingImages(
+            product.images.map((i) => ({ id: i.id, url: i.url })),
+          );
 
           setSelectedCategories(
             product.categories.map((c) => ({
@@ -142,17 +140,34 @@ export function ProductForm({ productId }: ProductFormProps) {
   }, [brandInput, brands]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('La imagen no puede superar los 5MB.');
+    const tooBig = files.find((f) => f.size > 5 * 1024 * 1024);
+    if (tooBig) {
+      setError('Cada imagen debe pesar menos de 5MB.');
       return;
     }
 
-    setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    setNewFiles((prev) => [...prev, ...files]);
+    setNewPreviews((prev) => [
+      ...prev,
+      ...files.map((f) => URL.createObjectURL(f)),
+    ]);
     setError('');
+
+    // Permite volver a elegir el mismo archivo
+    e.target.value = '';
+  }
+
+  function removeExistingImage(id: string) {
+    setExistingImages((prev) => prev.filter((i) => i.id !== id));
+    setRemovedImageIds((prev) => [...prev, id]);
+  }
+
+  function removeNewFile(index: number) {
+    setNewFiles((prev) => prev.filter((_, i) => i !== index));
+    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
   }
 
   function addCategory(cat?: Category) {
@@ -232,16 +247,25 @@ export function ProductForm({ productId }: ProductFormProps) {
         savedProductId = created.id;
       }
 
-      // Subir imagen si se seleccionó una
-      if (selectedFile && savedProductId) {
-        await productImagesService.upload(
-          savedProductId,
-          selectedFile,
-          true,
-          token,
-        );
-      }
+      if (savedProductId) {
+        // Borrar las que se sacaron
+        for (const imageId of removedImageIds) {
+          await productImagesService
+            .remove(savedProductId, imageId, token)
+            .catch(() => {});
+        }
 
+        // Subir las nuevas
+        for (let i = 0; i < newFiles.length; i++) {
+          const isPrimary = existingImages.length === 0 && i === 0;
+          await productImagesService.upload(
+            savedProductId,
+            newFiles[i],
+            isPrimary,
+            token,
+          );
+        }
+      }
       router.push('/dashboard');
     } catch (err) {
       if (err instanceof ApiException) {
@@ -270,7 +294,7 @@ export function ProductForm({ productId }: ProductFormProps) {
     );
   }
 
-  const displayImage = previewUrl ?? currentImageUrl;
+ 
 
   return (
     <div className="max-w-lg mx-auto">
@@ -468,50 +492,76 @@ export function ProductForm({ productId }: ProductFormProps) {
           )}
         </div>
 
-        {/* Imagen */}
+       {/* Imágenes */}
         <div className="flex flex-col gap-2">
           <label className="text-sm text-neutral-400">
-            Imagen <span className="text-neutral-600 text-xs">(opcional)</span>
+            Imágenes <span className="text-neutral-600 text-xs">(opcional)</span>
           </label>
 
-          {/* Preview */}
-          {displayImage && (
-            <div className="relative aspect-square w-full max-w-xs rounded-xl overflow-hidden bg-neutral-800">
-              <img
-                src={displayImage}
-                alt="Preview"
-                className="w-full h-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedFile(null);
-                  setPreviewUrl(null);
-                  if (!previewUrl) setCurrentImageUrl(null);
-                }}
-                className="absolute top-2 right-2 bg-black/60 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs hover:bg-black"
-              >
-                ✕
-              </button>
+          {(existingImages.length > 0 || newPreviews.length > 0) && (
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+              {existingImages.map((img, i) => (
+                <div
+                  key={img.id}
+                  className="relative aspect-square overflow-hidden rounded-lg bg-neutral-800"
+                >
+                  <img
+                    src={img.url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                  {i === 0 && (
+                    <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white">
+                      Principal
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(img.id)}
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+
+              {newPreviews.map((url, i) => (
+                <div
+                  key={url}
+                  className="relative aspect-square overflow-hidden rounded-lg bg-neutral-800 ring-1 ring-green-600"
+                >
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <span className="absolute bottom-1 left-1 rounded bg-green-600 px-1.5 py-0.5 text-[10px] text-white">
+                    Nueva
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeNewFile(i)}
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* Selector de archivo */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/jpeg,image/png,image/webp"
+            multiple
             onChange={handleFileChange}
             className="hidden"
           />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-lg border border-neutral-700 border-dashed bg-neutral-900 px-4 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white transition-colors text-center"
+            className="rounded-lg border border-dashed border-neutral-700 bg-neutral-900 px-4 py-4 text-center text-sm text-neutral-400 transition-colors hover:border-neutral-500 hover:text-white"
           >
-            {displayImage ? '🔄 Cambiar imagen' : '📷 Elegir imagen'}
-            <span className="block text-xs text-neutral-600 mt-1">
-              JPG, PNG o WebP — máx. 5MB
+            📷 Agregar imágenes
+            <span className="mt-1 block text-xs text-neutral-600">
+              JPG, PNG o WebP — máx. 5MB cada una
             </span>
           </button>
         </div>
