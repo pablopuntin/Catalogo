@@ -78,7 +78,7 @@ export function FeaturedCarousel({
 
   return (
     <section
-      className="mb-8"
+      className="mb-10 sm:mb-14 md:mb-16"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => {
         syncIndexFromScroll();
@@ -90,7 +90,9 @@ export function FeaturedCarousel({
         setPaused(false);
       }}
     >
-      <h2 className="mb-4 text-xl font-bold text-white">{title}</h2>
+      <h2 className="mb-5 text-xl font-bold tracking-tight text-white sm:mb-6 sm:text-2xl md:mb-8 md:text-3xl">
+        {title}
+      </h2>
 
       <div
         ref={trackRef}

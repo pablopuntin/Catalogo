@@ -71,13 +71,13 @@ export function BrandsSection({
 
   return (
     <section
-      className="mb-8"
+      className="mb-10 sm:mb-14 md:mb-16"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={() => setPaused(true)}
       onTouchEnd={() => setPaused(false)}
     >
-      <h2 className="mb-4 text-center text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+      <h2 className="mb-5 text-center text-2xl font-bold tracking-tight text-white sm:mb-6 sm:text-3xl md:mb-8 md:text-4xl">
         {title}
       </h2>
 
