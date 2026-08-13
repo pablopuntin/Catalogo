@@ -17,12 +17,13 @@ export const businessConfigImagesService = {
     return data;
   },
 
-  uploadHero: async (file: File, token: string) => {
+
+  addHeroImage: async (file: File, token: string) => {
     const formData = new FormData();
     formData.append('file', file);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/business-config/hero`,
+      `${process.env.NEXT_PUBLIC_API_URL}/business-config/hero-images`,
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -34,4 +35,17 @@ export const businessConfigImagesService = {
     if (!response.ok) throw new Error(data.message ?? 'Error al subir la imagen.');
     return data;
   },
+
+  removeHeroImage: async (id: string, token: string) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/business-config/hero-images/${id}`,
+      {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (!response.ok) throw new Error('Error al quitar la imagen.');
+  },
 };
+  

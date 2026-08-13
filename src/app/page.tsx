@@ -11,6 +11,7 @@ import { businessConfigService, BusinessConfig } from '@/services/business-confi
 import { CatalogProduct, CatalogCategory, CatalogBrand } from '@/types/catalog';
 import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/hooks/useCart';
+import { HeroCarousel } from '@/components/catalog/HeroCarousel';
 
 function HomeContent() {
   const [featured, setFeatured] = useState<CatalogProduct[]>([]);
@@ -52,16 +53,13 @@ function HomeContent() {
 
       <main className="p-4">
         {/* Banner */}
-        {(config?.heroImageUrl || config?.businessDescription) && (
-          <div className="mb-10 rounded-xl overflow-hidden">
-            {config.heroImageUrl && (
-              <div className="aspect-video w-full bg-neutral-900">
-                <img
-                  src={config.heroImageUrl}
-                  alt={config.businessName}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+        {config && ((config.heroImages?.length ?? 0) > 0 || config.businessDescription) && (
+          <div className="mb-10 sm:mb-14 md:mb-16">
+            {config?.heroImages && config.heroImages.length > 0 && (
+              <HeroCarousel
+                images={config.heroImages}
+                alt={config.businessName}
+              />
             )}
             {config.businessDescription && (
              

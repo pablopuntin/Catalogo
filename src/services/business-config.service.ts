@@ -1,11 +1,18 @@
 import { api } from './api';
 
+export type HeroImage = {
+  id: string;
+  url: string;
+  sortOrder: number;
+};
+
+
 export type BusinessConfig = {
   id: string;
   businessName: string;
   legalName: string | null;
   logoUrl: string | null;
-  heroImageUrl: string | null;
+  heroImages: HeroImage[];
   businessDescription: string | null;
   whatsapp: string;
   phone: string | null;

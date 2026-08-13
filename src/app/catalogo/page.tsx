@@ -137,7 +137,7 @@ import { businessConfigService, BusinessConfig } from '@/services/business-confi
 import { CatalogProduct, CatalogCategory } from '@/types/catalog';
 import { useCart } from '@/hooks/useCart';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
 
 function CatalogoContent() {
   const searchParams = useSearchParams();

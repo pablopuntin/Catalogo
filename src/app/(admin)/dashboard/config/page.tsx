@@ -38,7 +38,7 @@ const heroInputRef = useRef<HTMLInputElement>(null);
   const [province, setProvince] = useState('');
   const [country, setCountry] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
-  const [heroImageUrl, setHeroImageUrl] = useState('');
+  const [heroImages, setHeroImages] = useState<{ id: string; url: string }[]>([]);
   const [currency, setCurrency] = useState('ARS');
 
   // Estado
@@ -72,22 +72,59 @@ const [uploadingHero, setUploadingHero] = useState(false);
         setProvince(config.province ?? '');
         setCountry(config.country ?? '');
         setLogoUrl(config.logoUrl ?? '');
-        setHeroImageUrl(config.heroImageUrl ?? '');
+        setHeroImages(config.heroImages ?? []);
         setCurrency(config.currency ?? 'ARS');
       })
       .catch(() => setIsNew(true))
       .finally(() => setLoadingData(false));
   }, [token]);
 
-  async function handleImageUpload(
+//   async function handleImageUpload(
+//   e: React.ChangeEvent<HTMLInputElement>,
+//   type: 'logo' | 'hero',
+// ) {
+//   const file = e.target.files?.[0];
+//   if (!file) return;
+
+//   if (file.size > 5 * 1024 * 1024) {
+//     setError('La imagen no puede superar los 5MB.');
+//     return;
+//   }
+
+//   type === 'logo' ? setUploadingLogo(true) : setUploadingHero(true);
+//   setError('');
+
+//   try {
+//     const result = type === 'logo'
+//       ? await businessConfigImagesService.uploadLogo(file, token)
+//       : await businessConfigImagesService.uploadHero(file, token);
+
+//     if (type === 'logo') {
+//       setLogoUrl(result.logoUrl ?? '');
+//     } else {
+//       setHeroImageUrl(result.heroImageUrl ?? '');
+//     }
+
+//     setSuccess('Imagen subida correctamente.');
+//   } catch {
+//     setError('Error al subir la imagen.');
+//   } finally {
+//     type === 'logo' ? setUploadingLogo(false) : setUploadingHero(false);
+//   }
+// }
+
+//ref
+async function handleImageUpload(
   e: React.ChangeEvent<HTMLInputElement>,
   type: 'logo' | 'hero',
 ) {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const files = Array.from(e.target.files ?? []);
+  e.target.value = '';
+  if (files.length === 0) return;
 
-  if (file.size > 5 * 1024 * 1024) {
-    setError('La imagen no puede superar los 5MB.');
+  const tooBig = files.find((f) => f.size > 5 * 1024 * 1024);
+  if (tooBig) {
+    setError('Cada imagen debe pesar menos de 5MB.');
     return;
   }
 
@@ -95,14 +132,14 @@ const [uploadingHero, setUploadingHero] = useState(false);
   setError('');
 
   try {
-    const result = type === 'logo'
-      ? await businessConfigImagesService.uploadLogo(file, token)
-      : await businessConfigImagesService.uploadHero(file, token);
-
     if (type === 'logo') {
+      const result = await businessConfigImagesService.uploadLogo(files[0], token);
       setLogoUrl(result.logoUrl ?? '');
     } else {
-      setHeroImageUrl(result.heroImageUrl ?? '');
+      for (const file of files) {
+        const img = await businessConfigImagesService.addHeroImage(file, token);
+        setHeroImages((prev) => [...prev, { id: img.id, url: img.url }]);
+      }
     }
 
     setSuccess('Imagen subida correctamente.');
@@ -112,6 +149,17 @@ const [uploadingHero, setUploadingHero] = useState(false);
     type === 'logo' ? setUploadingLogo(false) : setUploadingHero(false);
   }
 }
+
+async function handleRemoveHeroImage(id: string) {
+  setError('');
+  try {
+    await businessConfigImagesService.removeHeroImage(id, token);
+    setHeroImages((prev) => prev.filter((i) => i.id !== id));
+  } catch {
+    setError('Error al quitar la imagen.');
+  }
+}
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -153,7 +201,7 @@ const [uploadingHero, setUploadingHero] = useState(false);
       province: province.trim() || undefined,
       country: country.trim() || undefined,
       logoUrl: logoUrl.trim() || undefined,
-      heroImageUrl: heroImageUrl.trim() || undefined,
+     
       currency,
     };
 
@@ -450,18 +498,35 @@ const [uploadingHero, setUploadingHero] = useState(false);
     </button>
   </div>
 
-  {/* Hero */}
+  {/* Banner */}
   <div className="flex flex-col gap-2">
-    <label className={labelClass}>Imagen principal (hero)</label>
-    {heroImageUrl && (
-      <div className="w-full aspect-video rounded-xl overflow-hidden bg-neutral-800">
-        <img src={heroImageUrl} alt="Hero" className="w-full h-full object-cover" />
+    <label className={labelClass}>Imágenes del banner</label>
+
+    {heroImages.length > 0 && (
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {heroImages.map((img) => (
+          <div
+            key={img.id}
+            className="relative aspect-video overflow-hidden rounded-lg bg-neutral-800"
+          >
+            <img src={img.url} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => handleRemoveHeroImage(img.id)}
+              className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
     )}
+
     <input
       ref={heroInputRef}
       type="file"
       accept="image/jpeg,image/png,image/webp"
+      multiple
       onChange={(e) => handleImageUpload(e, 'hero')}
       className="hidden"
     />
@@ -469,11 +534,11 @@ const [uploadingHero, setUploadingHero] = useState(false);
       type="button"
       onClick={() => heroInputRef.current?.click()}
       disabled={uploadingHero}
-      className="rounded-lg border border-neutral-700 border-dashed bg-neutral-900 px-4 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white transition-colors text-center disabled:opacity-50"
+      className="rounded-lg border border-dashed border-neutral-700 bg-neutral-900 px-4 py-4 text-center text-sm text-neutral-400 transition-colors hover:border-neutral-500 hover:text-white disabled:opacity-50"
     >
-      {uploadingHero ? 'Subiendo...' : heroImageUrl ? '🔄 Cambiar imagen' : '📷 Subir imagen principal'}
-      <span className="block text-xs text-neutral-600 mt-1">
-        JPG, PNG o WebP — máx. 5MB
+      {uploadingHero ? 'Subiendo...' : '📷 Agregar imágenes al banner'}
+      <span className="mt-1 block text-xs text-neutral-600">
+        JPG, PNG o WebP — máx. 5MB cada una. Si hay varias, rotan solas.
       </span>
     </button>
   </div>
