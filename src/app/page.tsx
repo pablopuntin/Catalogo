@@ -13,7 +13,8 @@ import { Footer } from '@/components/layout/Footer';
 import { useCart } from '@/hooks/useCart';
 
 function HomeContent() {
-  const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [featured, setFeatured] = useState<CatalogProduct[]>([]);
+  const [offers, setOffers] = useState<CatalogProduct[]>([]);
   const [categories, setCategories] = useState<CatalogCategory[]>([]);
   const [brands, setBrands] = useState<CatalogBrand[]>([]);
   const [config, setConfig] = useState<BusinessConfig | null>(null);
@@ -24,22 +25,21 @@ function HomeContent() {
 
   useEffect(() => {
     Promise.all([
-      catalogService.getProducts(),
+      catalogService.getProducts({ destacado: '1', limit: 20 }),
+      catalogService.getProducts({ oferta: '1', limit: 20 }),
       catalogService.getCategories(),
       catalogService.getBrands().catch(() => []),
       businessConfigService.getPublic().catch(() => null),
     ])
-      .then(([prods, cats, brs, cfg]) => {
-        setProducts(prods);
+      .then(([feat, offs, cats, brs, cfg]) => {
+        setFeatured(feat.items);
+        setOffers(offs.items);
         setCategories(cats);
         setBrands(brs);
         setConfig(cfg);
       })
       .finally(() => setLoading(false));
   }, []);
-
-  const featured = products.filter((p) => p.featured);
-  const offers = products.filter((p) => p.finalPrice !== null);
 
   return (
     <>
@@ -64,10 +64,7 @@ function HomeContent() {
               </div>
             )}
             {config.businessDescription && (
-              // <p className="text-sm text-neutral-400 mt-3 leading-relaxed">
-              //   {config.businessDescription}
-              // </p>
-
+             
               <p className="mt-4 text-center text-base font-medium leading-relaxed tracking-tight text-neutral-200 sm:text-lg md:text-xl">
                 {config.businessDescription}
               </p>
