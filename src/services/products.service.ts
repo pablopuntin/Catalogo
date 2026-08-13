@@ -27,7 +27,8 @@ export type Product = {
   active: boolean;
   featured?: boolean;
   discountType?: 'PERCENTAGE' | 'FIXED' | 'TWO_FOR_ONE' | null;
-  discountValue?: string | number | null;
+ discountValue?: string | number | null;
+  specs?: { id: string; label: string; value: string }[];
   brandId: string;
   deletedAt: string | null;
   brand: {
@@ -53,6 +54,7 @@ export type CreateCatalogProductPayload = {
     featured?: boolean;
     discountType?: 'PERCENTAGE' | 'FIXED' | 'TWO_FOR_ONE' | null;
     discountValue?: number | null;
+    specs?: { label: string; value: string }[];
   };
 };
 
@@ -68,6 +70,7 @@ export type UpdateCatalogProductPayload = {
     featured?: boolean;
     discountType?: 'PERCENTAGE' | 'FIXED' | 'TWO_FOR_ONE' | null;
     discountValue?: number | null;
+    specs?: { label: string; value: string }[];
   };
 };
 

@@ -26,6 +26,9 @@ export function ProductForm({ productId }: ProductFormProps) {
   const [price, setPrice] = useState('');
   const [visible, setVisible] = useState(true);
  
+  // Detalles técnicos
+  const [specs, setSpecs] = useState<{ label: string; value: string }[]>([]);
+
   // Promoción
   const [featured, setFeatured] = useState(false);
   const [discountType, setDiscountType] = useState<'' | 'PERCENTAGE' | 'FIXED' | 'TWO_FOR_ONE'>('');
@@ -71,6 +74,12 @@ export function ProductForm({ productId }: ProductFormProps) {
           setPrice(product.price);
           setVisible(product.active);
           setFeatured(product.featured ?? false);
+          setSpecs(
+            (product.specs ?? []).map((s) => ({
+              label: s.label,
+              value: s.value,
+            })),
+          );
           setDiscountType(product.discountType ?? '');
           setDiscountValue(
             product.discountValue != null ? String(product.discountValue) : '',
@@ -230,6 +239,7 @@ export function ProductForm({ productId }: ProductFormProps) {
          price: Number(price),
           active: visible,
           featured,
+          specs: specs.filter((s) => s.label.trim() && s.value.trim()),
           discountType: discountType === '' ? null : discountType,
           discountValue:
             discountType === 'PERCENTAGE' || discountType === 'FIXED'
@@ -563,6 +573,63 @@ export function ProductForm({ productId }: ProductFormProps) {
             <span className="mt-1 block text-xs text-neutral-600">
               JPG, PNG o WebP — máx. 5MB cada una
             </span>
+          </button>
+        </div>
+
+
+        {/* Detalles técnicos */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-neutral-400">
+            Detalles técnicos{' '}
+            <span className="text-xs text-neutral-600">(opcional)</span>
+          </label>
+
+          {specs.map((spec, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                type="text"
+                value={spec.label}
+                onChange={(e) =>
+                  setSpecs((prev) =>
+                    prev.map((s, idx) =>
+                      idx === i ? { ...s, label: e.target.value } : s,
+                    ),
+                  )
+                }
+                placeholder="Cantidad de puertas"
+                className="w-1/2 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-neutral-500"
+              />
+              <input
+                type="text"
+                value={spec.value}
+                onChange={(e) =>
+                  setSpecs((prev) =>
+                    prev.map((s, idx) =>
+                      idx === i ? { ...s, value: e.target.value } : s,
+                    ),
+                  )
+                }
+                placeholder="4"
+                className="flex-1 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-neutral-500"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setSpecs((prev) => prev.filter((_, idx) => idx !== i))
+                }
+                className="shrink-0 rounded-lg border border-neutral-800 px-3 text-sm text-neutral-500 hover:border-red-800 hover:text-red-400"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => setSpecs((prev) => [...prev, { label: '', value: '' }])}
+            className="rounded-lg border border-dashed border-neutral-700 bg-neutral-900 px-4 py-2 text-sm text-neutral-400 transition-colors hover:border-neutral-500 hover:text-white"
+          >
+            + Agregar fila
           </button>
         </div>
 

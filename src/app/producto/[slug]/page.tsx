@@ -251,7 +251,30 @@ function ProductContent({
                       {product.description}
                     </p>
                   </div>
-                
+                )}
+
+                {/* Ficha técnica */}
+                {product.specs && product.specs.length > 0 && (
+                  <div className="mt-6">
+                    <h2 className="mb-2 text-base font-semibold text-white sm:text-lg">
+                      Ficha técnica
+                    </h2>
+                    <dl className="divide-y divide-neutral-800 border-y border-neutral-800">
+                      {product.specs.map((spec) => (
+                        <div
+                          key={spec.id}
+                          className="flex justify-between gap-4 py-3"
+                        >
+                          <dt className="text-sm text-neutral-500">
+                            {spec.label}
+                          </dt>
+                          <dd className="text-right text-sm font-medium text-white sm:text-base">
+                            {spec.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
                 )}
               </div>
             </div>

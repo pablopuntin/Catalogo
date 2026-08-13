@@ -1,142 +1,3 @@
-// //ref
-// 'use client';
-
-// import Link from 'next/link';
-// import { useEffect, useState } from 'react';
-// import { useAuthStore } from '@/features/authentication/auth.store';
-// import { SearchBar } from '@/components/catalog/SearchBar';
-// import { CategoryList } from '@/components/catalog/CategoryList';
-// import { Product, productsService } from '@/services/products.service';
-// import { categoriesService, Category } from '@/services/categories.service';
-
-// export default function DashboardPage() {
-//   const token = useAuthStore((s) => s.accessToken)!;
-
-//   const [products, setProducts] = useState<Product[]>([]);
-//   const [categories, setCategories] = useState<Category[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState('');
-//   const [search, setSearch] = useState('');
-//   const [selectedCategory, setSelectedCategory] = useState('Todos');
-
-//   useEffect(() => {
-//     if (!token) return;
-//     Promise.all([
-//       productsService.findAll(token),
-//       categoriesService.findAll(token),
-//     ])
-//       .then(([prods, cats]) => {
-//         setProducts(prods);
-//         setCategories(cats);
-//       })
-//       .catch(() => setError('No se pudieron cargar los datos.'))
-//       .finally(() => setLoading(false));
-//   }, [token]);
-
-//   const filtered = products.filter((product) => {
-//     const matchCategory =
-//       selectedCategory === 'Todos'
-//         ? true
-//         : product.categories.some(
-//             (c) => c.category.name === selectedCategory,
-//           );
-
-//     const matchSearch = product.name
-//       .toLowerCase()
-//       .includes(search.toLowerCase());
-
-//     return matchCategory && matchSearch;
-//   });
-
-//   return (
-//     <div className="relative">
-//       <h1 className="text-xl font-bold mb-4">Catálogo</h1>
-
-//       <SearchBar search={search} onSearchChange={setSearch} />
-
-//       <CategoryList
-//         categories={[
-//           { id: 'all', name: 'Todos', slug: 'todos' },
-//           ...categories.map((c) => ({
-//             id: c.id,
-//             name: c.name,
-//             slug: c.slug,
-//           })),
-//         ]}
-//         selectedCategory={selectedCategory}
-//         onSelectCategory={setSelectedCategory}
-//       />
-
-//       {loading && (
-//         <p className="text-neutral-400 text-sm mt-6">Cargando productos...</p>
-//       )}
-
-//       {error && (
-//         <p className="text-red-400 text-sm mt-6">{error}</p>
-//       )}
-
-//       {!loading && !error && filtered.length === 0 && (
-//         <p className="text-neutral-400 text-sm text-center mt-16">
-//           No se encontraron productos.
-//         </p>
-//       )}
-
-//       {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-6"> */}
-//       <div className="grid grid-cols-2 gap-3 mt-6 md:grid-cols-3 lg:grid-cols-4">
-//         {filtered.map((product) => (
-//           <div
-//             key={product.id}
-//             className="rounded-xl border border-neutral-800 overflow-hidden bg-neutral-900"
-//           >
-//             <div className="aspect-square bg-neutral-800 flex items-center justify-center">
-//               {product.images[0] ? (
-//                 <img
-//                   src={product.images[0].url}
-//                   alt={product.name}
-//                   className="w-full h-full object-cover"
-//                 />
-//               ) : (
-//                 <span className="text-neutral-600 text-xs">Sin imagen</span>
-//               )}
-//             </div>
-
-//             <div className="p-3">
-//               <p className="text-xs text-neutral-500 mb-1">
-//                 {product.brand.name}
-//               </p>
-//               <h3 className="font-medium text-sm leading-tight">
-//                 {product.name}
-//               </h3>
-//               <p className="mt-1 font-bold text-sm">
-//                 ${Number(product.price).toLocaleString('es-AR')}
-//               </p>
-
-//               <div className="mt-3 flex gap-2">
-//                 <Link
-//                   href={`/dashboard/products/${product.id}/edit`}
-//                   className="flex-1 rounded-lg border border-neutral-700 py-2 text-center text-xs hover:border-white transition-colors"
-//                 >
-//                   Editar
-//                 </Link>
-//                 <button className="flex-1 rounded-lg border border-red-900 py-2 text-xs text-red-400 hover:border-red-500 transition-colors">
-//                   Eliminar
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-
-//       <Link
-//         href="/dashboard/products/new"
-//         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-white text-black flex items-center justify-center text-2xl font-bold shadow-lg hover:bg-neutral-200 transition-colors z-50"
-//       >
-//         +
-//       </Link>
-//     </div>
-//   );
-// }
-
 //soft delete y filtro inactivo y activo
 'use client';
 
@@ -147,6 +8,7 @@ import { SearchBar } from '@/components/catalog/SearchBar';
 import { CategoryList } from '@/components/catalog/CategoryList';
 import { Product, productsService } from '@/services/products.service';
 import { categoriesService, Category } from '@/services/categories.service';
+
 
 type StatusFilter = 'active' | 'inactive';
 
@@ -191,15 +53,7 @@ export default function DashboardPage() {
     loadProducts(status);
   }
 
-  // async function handleDelete(id: string) {
-  //   if (!confirm('¿Eliminás este producto?')) return;
-  //   try {
-  //     await productsService.remove(id, token);
-  //     loadProducts(statusFilter);
-  //   } catch {
-  //     alert('No se pudo eliminar el producto.');
-  //   }
-  // }
+
 
   async function handleDelete(id: string, isDeleted: boolean) {
   if (isDeleted) {

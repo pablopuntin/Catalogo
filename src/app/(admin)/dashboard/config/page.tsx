@@ -79,41 +79,7 @@ const [uploadingHero, setUploadingHero] = useState(false);
       .finally(() => setLoadingData(false));
   }, [token]);
 
-//   async function handleImageUpload(
-//   e: React.ChangeEvent<HTMLInputElement>,
-//   type: 'logo' | 'hero',
-// ) {
-//   const file = e.target.files?.[0];
-//   if (!file) return;
 
-//   if (file.size > 5 * 1024 * 1024) {
-//     setError('La imagen no puede superar los 5MB.');
-//     return;
-//   }
-
-//   type === 'logo' ? setUploadingLogo(true) : setUploadingHero(true);
-//   setError('');
-
-//   try {
-//     const result = type === 'logo'
-//       ? await businessConfigImagesService.uploadLogo(file, token)
-//       : await businessConfigImagesService.uploadHero(file, token);
-
-//     if (type === 'logo') {
-//       setLogoUrl(result.logoUrl ?? '');
-//     } else {
-//       setHeroImageUrl(result.heroImageUrl ?? '');
-//     }
-
-//     setSuccess('Imagen subida correctamente.');
-//   } catch {
-//     setError('Error al subir la imagen.');
-//   } finally {
-//     type === 'logo' ? setUploadingLogo(false) : setUploadingHero(false);
-//   }
-// }
-
-//ref
 async function handleImageUpload(
   e: React.ChangeEvent<HTMLInputElement>,
   type: 'logo' | 'hero',

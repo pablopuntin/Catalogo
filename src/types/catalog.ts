@@ -6,19 +6,20 @@ export type CatalogImage = {
   sortOrder: number;
 };
 
+export type CatalogSpec = {
+  id: string;
+  label: string;
+  value: string;
+  sortOrder: number;
+};
+
 export type CatalogCategory = {
   id: string;
   name: string;
   slug: string;
 };
 
-// export type CatalogBrand = {
-//   id: string;
-//   name: string;
-//   slug: string;
-// };
 
-//ref
 export type CatalogBrand = {
   id: string;
   name: string;
@@ -43,7 +44,8 @@ export type CatalogProduct = {
   price: string;
   finalPrice: string | null;    // ← nuevo
   promotion: CatalogPromotion | null;  // ← nuevo
-  featured: boolean;            // ← nuevo (destacado)
+  featured: boolean;  
+  specs?: CatalogSpec[];        // ← nuevo (ficha técnica)          // ← nuevo (destacado)
   active: boolean;
   brand: CatalogBrand;
   categories: {
