@@ -53,7 +53,7 @@ export function HeroCarousel({ images, alt = '' }: HeroCarouselProps) {
         {images.map((img) => (
           <div
             key={img.id}
-            className="aspect-video w-full shrink-0 snap-center bg-neutral-900"
+            className="h-48 min-w-full shrink-0 snap-center bg-neutral-900 sm:h-64 md:h-80 lg:h-96"
           >
             <img
               src={img.url}
